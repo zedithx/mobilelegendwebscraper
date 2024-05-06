@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pandas as pd
 import requests
@@ -45,8 +47,11 @@ for date, matches in schedule_dict.items():
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, "html.parser")
         games = soup.find_all("div", id=lambda x: x and x.startswith('game'))
-        print(games)
-
+        # iterate through the games
+        for game in games:
+            frames = game.findAll("td", attrs={"style":"max-width: 30px;"})
+            # heroes = game.findAll(string=re.compile("[A-Za-z]"))
+            # print(heroes)
 
 #         df = pd.DataFrame(data)
 #         df.insert(0, "Date", np.nan, True)
