@@ -3,39 +3,52 @@ import time
 
 import numpy as np
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 
 main_df = pd.DataFrame()
 # month number mapping
-month_dict = {"Mar": "03", "Apr": "04", "May": "05"}
-
 # First I need to get the team schedules as they are used in the url
-schedule_dict = {}
 print("Generating MPL results....")
-weeks_list = [1, 2, 3, 4, 5, 6, 7]
 
 # Iterate through all match dates and specific matches
 URL = f"https://liquipedia.net/mobilelegends/MPL/Philippines/Season_13/Regular_Season#Week_1"
-from selenium import webdriver
 #set chromodriver.exe path
 driver = webdriver.Chrome()
-#implicit wait
 driver.get(URL)
-time.sleep(5)
 
+time.sleep(6)
+driver.find_element(By.ID, "top-ad").click()
 icons = driver.find_elements(By.CLASS_NAME, "brkts-match-info-icon")
+icons = icons[0:24]
 time.sleep(2)
-ad_popup = driver.find_element(By.ID, "top-ad")
-ad_popup.click()
 for icon in icons:
     icon.click()
     info_frame = driver.find_element(By.CLASS_NAME, "brkts-popup")
-    print(info_frame)
+
+    # get week
+
+    # get team
+    team1_span, team2_span = info_frame.find_elements(By.CLASS_NAME, "name")
+    team1, team2 = team1_span.find_element(By.TAG_NAME, "a"), team2_span.find_element(By.TAG_NAME, "a")
+    print(team1.get_attribute("innerText"), team2.get_attribute("innerText"))
+
+    # get heroes
+    comp1_div, comp2_div = info_frame.find_elements(By.CLASS_NAME, "brkts-popup-body-game")
+    comp1 = comp1_div.find_elements(By.TAG_NAME, "a")
+    comp2 = comp2_div.find_elements(By.TAG_NAME, "a")
+    for hero in comp1:
+        pass
+        # print(hero.get_attribute("innerText").strip())
+
+
+    # get W indicator
+
+
     # get rid of the popup
     icon.click()
+
 # To access the stats we need to click one by one then put in our df
 # iterate through the games
             # heroes = game.findAll(string=re.compile("[A-Za-z]"))
